@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link href="css/styles.css" rel="stylesheet">
+    <style>
+        .content {
+            height: 300px;
+            overflow: auto;
+        }
+    </style>
+    <script src="js/vue.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="sample">
+            <form v-if="!dataSent" v-on:submit.prevent="onSend">
+                <div class="content alert alert-info" v-on:scroll="onScroll" ref="scroll">
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                    <p>This text no one reads. This text no one reads. This text no one reads.</p>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" v-bind:style="progressStyle"
+                        v-bind:aria-valuenow="this.scrollInf.pc" aria-valuemin="0" aria-valuemax="100">
+                        {{this.scrollInf.pc}} %</div>
+                </div>
+
+                <div v-if="scrollInf.onBottom">
+
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" v-model="userSetts.agreeAll">
+                            Agree all
+                        </label>
+                    </div>
+                    <div  class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" v-model="userSetts.getSpam">
+                            Get spam
+                        </label>
+                    </div>
+                    <div v-if="userSetts.getSpam">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" name="spam" value="email" type="radio" v-model="userSetts.spamType">
+                                E-mail
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" name="spam" value="phone" type="radio" v-model="userSetts.spamType">
+                                Phone
+                            </label>
+                        </div>
+                    </div>
+                   
+                </div>
+
+                <hr>
+                <button v-bind:disabled="!this.userSetts.agreeAll" class="btn btn-primary">
+                    Send Data
+                </button>
+            </form>
+            <div v-else >
+                <table class="table table-bordered">
+                    <tr>
+                        <td>Agree all</td>
+                        <td v-bind:class="cellAgreeStyle">{{agreeText}}</td>
+                    </tr>
+                    <tr>
+                        <td>Get Spam</td>
+                        <td v-bind:class="cellSpamClasses">{{getSpamText}}</td>
+                    </tr>
+                    <tr>
+                        <td>Spam Type</td>
+                        <td >{{spamTypeText}}</td>
+                    </tr>
+                    
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        Vue.createApp({
+            data: () => ({
+                scrollInf: {
+                    pos: 0,
+                    pc: 0,
+                    onBottom: false
+                },
+                userSetts:{
+                    agreeAll: false,
+                    getSpam: false,
+                    spamType: "",
+                },
+                dataSent:false
+                
+                
+            }),
+           
+            methods: {
+                onScroll(e) {
+                    const scrl = this.$refs.scroll;
+                    if (this.scrollInf.pos < scrl.scrollTop) {
+                        this.scrollInf.pos = scrl.scrollTop;
+                        this.scrollInf.pc = Math.round(scrl.scrollTop / (scrl.scrollHeight - scrl
+                            .clientHeight) * 100);
+                        this.scrollInf.onBottom = scrl.scrollTop === scrl.scrollHeight - scrl.clientHeight;
+                    }
+                },
+                onSend() {
+                    this.dataSent = true;
+                }
+            },
+            computed: {
+                progressStyle() {
+                    return {
+                        width: this.scrollInf.pc + "%"
+                    }
+                },
+                cellSpamClasses(){
+                    const ok = this.userSetts.getSpam;
+                    return {
+                        "text-success": ok,
+                        "text-danger": !ok
+                    };
+                },
+                cellAgreeStyle(){
+                    const ok = this.userSetts.agreeAll;
+                    return {
+                        "text-success": ok,
+                        "text-danger": !ok
+                    };
+                },
+                
+                agreeText(){
+                    return this.userSetts.agreeAll?"Yes":"No";
+                },
+                getSpamText(){
+                    return this.userSetts.getSpam?"Yes":"No";
+                },
+
+                spamTypeText(){
+                    return this.userSetts.spamType==="phone"?"Phone"
+                        :this.userSetts.spamType==="email"?"E-mail"
+                        :"";
+                },
+            }
+        }).mount('.sample');
+    </script>
+</body>
+
+</html>

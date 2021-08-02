@@ -11,22 +11,22 @@
 <body>
 	<div class="wrapper">
 		<div class="sample">
-			<form v-show="!datasended" v-on:submit.prevent="send">
+			<form v-if="!datasended" v-on:submit.prevent="send">
 				<div class="form-group">
 					<label>Email</label>
-					<input type="text" class="form-control" v-model.trim="email">
+					<input type="text" class="form-control" v-model.trim="user.email"  >
 				</div>
                 <div class="form-group">
 					<label>Phone</label>
-					<input type="text" class="form-control" v-model.trim="phone">
+					<input type="text" class="form-control" v-model.trim="user.phone">
 				</div>
                 <div class="form-group">
 					<label>FirstName</label>
-					<input type="text" class="form-control" v-model.trim="firstname">
+					<input type="text" class="form-control" v-model.trim="user.firstname">
 				</div>
                 <div class="form-group">
 					<label>LastName</label>
-					<input type="text" class="form-control" v-model.trim="lastname">
+					<input type="text" class="form-control" v-model.trim="user.lastname">
 				</div>
 
 				<div class="form-group">
@@ -39,18 +39,18 @@
 					<input type="text" class="form-control" v-model.trim="guests[i]">
 				</div>
 				<hr>
-				<button  class="btn btn-success" v-bind:disabled="disabledBtn" >Send Data</button>
+				<button  class="btn btn-success" v-bind:disabled="!validUserData" >Send Data</button>
 			</form>
-			<div v-show="datasended" >
+			<div v-else >
 				<h2>All done!</h2>
 				<table class="table table-bordered">
 					<tr>
 						<td>Email</td>
-						<td>{{email}}</td>
+						<td>{{user.email}}</td>
 					</tr>
                     <tr>
 						<td>Phone</td>
-						<td>{{phone}}</td>
+						<td>{{user.phone}}</td>
 					</tr>
                     <tr>
 						<td>Full Name</td>
@@ -71,10 +71,12 @@
 	<script>
 		Vue.createApp({
 			data: () => ({
-				email:"",
-                phone:"",
-                firstname:"",
-                lastname:"",
+                user:{
+                    email:"",
+                    phone:"",
+                    firstname:"",
+                    lastname:"",
+                },
                 guests: [],
                 datasended: false
 			}),
@@ -82,11 +84,12 @@
                 isDisabled(){
                     return true;
                 },
-                disabledBtn(){
-                    return !(this.email.length && this.phone.length && this.firstname.length && this.lastname.length) ;
+                validUserData(){
+                    return Object.values(this.user).every(_s => _s.length > 0);
                 },
                 fullname(){
-                    return (this.firstname.trim()+" "+this.lastname.trim()).trim();
+                    console.log(this.user);
+                    return (this.user.firstname.trim() + " " + this.user.lastname.trim()).trim();
                 },
                 validGuests(){
                     return this.guests.filter(_g=>_g);
@@ -102,8 +105,10 @@
                 send(e){
                     this.datasended = true;
                 }
-            }
-		}).mount('.sample');
+            },
+
+		
+        }).mount('.sample');
 	</script>
 </body>
 </html>
