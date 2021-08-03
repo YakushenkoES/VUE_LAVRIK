@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/font-awesome.min.css">
     <link href="css/styles.css" rel="stylesheet">
     <style>
         .content {
@@ -49,7 +48,7 @@
                         {{this.scrollInf.pc}} %</div>
                 </div>
 
-                <div v-if="scrollInf.onBottom">
+                <template v-if="scrollDone">
 
                     <div class="form-check">
                         <label class="form-check-label">
@@ -63,7 +62,8 @@
                             Get spam
                         </label>
                     </div>
-                    <div v-if="userSetts.getSpam">
+
+                    <template v-if="userSetts.getSpam">
                         <div class="form-check">
                             <label class="form-check-label">
                                 <input class="form-check-input" name="spam" value="email" type="radio" v-model="userSetts.spamType">
@@ -76,12 +76,13 @@
                                 Phone
                             </label>
                         </div>
-                    </div>
+                    </template>
                    
-                </div>
+                </template>
 
                 <hr>
-                <button v-bind:disabled="!this.userSetts.agreeAll" class="btn btn-primary">
+                
+                <button v-bind:disabled="!userSetts.agreeAll" class="btn btn-primary">
                     Send Data
                 </button>
             </form>
@@ -89,13 +90,13 @@
                 <table class="table table-bordered">
                     <tr>
                         <td>Agree all</td>
-                        <td v-bind:class="cellAgreeStyle">{{agreeText}}</td>
+                        <td ><app-bool-to-text v-bind:value="userSetts.agreeAll"></app-bool-to-text></td>
                     </tr>
                     <tr>
                         <td>Get Spam</td>
-                        <td v-bind:class="cellSpamClasses">{{getSpamText}}</td>
+                        <td ><app-bool-to-text v-bind:value="userSetts.getSpam"></app-bool-to-text></td>
                     </tr>
-                    <tr>
+                    <tr v-if="userSetts.getSpam">
                         <td>Spam Type</td>
                         <td >{{spamTypeText}}</td>
                     </tr>
@@ -105,12 +106,30 @@
         </div>
     </div>
     <script>
+
+        let AppBoolToText = {
+            template:"<span v-bind:class='spanClass'>{{value?'Yes':'No'}}</span>",
+            props:{
+                value: Boolean,
+            },
+            computed:{
+                spanClass(){
+                    return{
+                        "text-success": this.value,
+                        "text-danger": !this.value
+                    }
+                }
+            }
+        }
+
         Vue.createApp({
+            components:{
+                AppBoolToText
+            },
             data: () => ({
                 scrollInf: {
                     pos: 0,
-                    pc: 0,
-                    onBottom: false
+                    pc: 0
                 },
                 userSetts:{
                     agreeAll: false,
@@ -127,43 +146,24 @@
                     const scrl = this.$refs.scroll;
                     if (this.scrollInf.pos < scrl.scrollTop) {
                         this.scrollInf.pos = scrl.scrollTop;
-                        this.scrollInf.pc = Math.round(scrl.scrollTop / (scrl.scrollHeight - scrl
+                        this.scrollInf.pc = Math.floor(scrl.scrollTop / (scrl.scrollHeight - scrl
                             .clientHeight) * 100);
-                        this.scrollInf.onBottom = scrl.scrollTop === scrl.scrollHeight - scrl.clientHeight;
                     }
                 },
                 onSend() {
-                    this.dataSent = true;
+                    if(this.userSetts.agreeAll)
+                        this.dataSent = true;
                 }
             },
             computed: {
+                scrollDone(){
+                    return this.scrollInf.pc >= 98;
+                },
                 progressStyle() {
                     return {
                         width: this.scrollInf.pc + "%"
                     }
                 },
-                cellSpamClasses(){
-                    const ok = this.userSetts.getSpam;
-                    return {
-                        "text-success": ok,
-                        "text-danger": !ok
-                    };
-                },
-                cellAgreeStyle(){
-                    const ok = this.userSetts.agreeAll;
-                    return {
-                        "text-success": ok,
-                        "text-danger": !ok
-                    };
-                },
-                
-                agreeText(){
-                    return this.userSetts.agreeAll?"Yes":"No";
-                },
-                getSpamText(){
-                    return this.userSetts.getSpam?"Yes":"No";
-                },
-
                 spamTypeText(){
                     return this.userSetts.spamType==="phone"?"Phone"
                         :this.userSetts.spamType==="email"?"E-mail"
