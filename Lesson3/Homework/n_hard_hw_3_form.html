@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link href="css/styles.css" rel="stylesheet">
+    <script src="js/vue.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="sample">
+            <form v-if="!sent" v-on:submit.prevent="onSubmit">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" v-bind:style="progressStyle" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div>
+
+                    <app-field v-for="_field, i in info" v-on:changed="onChanged(i, $event)"
+                        v-bind:label="_field.label"
+                        v-bind:value="_field.value"
+                        v-bind:pattern="_field.pattern"
+                        v-bind:activated="_field.activated"
+                        v-bind:valid="_field.valid"
+                    ></app-field>
+
+                </div>
+                <button class="btn btn-primary" v-bind:disabled="complete_pc<100" >
+                    Send Data
+                </button>
+            </form>
+            
+            <div v-else >
+                <table class="table table-bordered">
+                    <tr v-for="_f in info">
+                        <td>{{_f.label}}</td>
+                        <td>{{_f.value}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        const AppField = {
+            props:{
+                label: String,
+                value: String,
+                valid: Boolean,
+                pattern: RegExp,
+                activated: Boolean
+            },
+            template: `
+                <div class="form-group">
+                    <label>
+                        {{ label }}
+                        <span v-if="activated"
+                            class="fa" :class="validClass"
+                        ></span>
+                    </label>
+                    <input type="text" class="form-control" :value="value" v-on:input.trim='onInput'>
+                </div>
+            `,
+            methods:{
+                onInput(e){
+                    const val = e.target.value;
+                    const _data = {
+                        value: val,
+                        valid: this.pattern.test(val),
+                        activated: true
+                    }
+                    this.$emit("changed", _data);
+                }
+            },
+            computed:{
+                validClass(){
+                    return {
+                        "fa-check-circle text-success": this.valid,
+                        "fa-exclamation-circle text-danger": !this.valid,
+                    };
+                }
+            }
+        };
+
+
+        Vue.createApp({
+            components: {
+                AppField
+            },
+            data: () => ({
+                info: [{
+                        label: 'Name',
+                        pattern: /^[a-zA-Z ]{2,30}$/
+                    },
+                    {
+                        label: 'Phone',
+                        pattern: /^[0-9]{7,14}$/
+                    },
+                    {
+                        label: 'Email',
+                        pattern: /.+/
+                    },
+                    {
+                        label: 'Some Field 1',
+                        pattern: /.+/
+                    },
+                    {
+                        label: 'Some Field 2',
+                        pattern: /.+/
+                    }
+                ],
+                sent: false
+            }),
+            methods: {
+                
+                onChanged(i, data){
+                    const f = this.info[i];
+                    f.value = data.value;
+                    f.activated = data.activated;
+                    f.valid = data.valid;
+                },
+                onSubmit(){
+                    if(this.complete_pc >=100)
+                        this.sent = true;
+                }
+            },
+            computed:{
+                progressStyle(){
+                    return{
+                        width: this.complete_pc + "%"
+                    };
+                },
+                complete_pc(){
+                    const qty = this.info.filter(_i=>_i.activated && _i.valid).length;
+                    const qtyTotal = this.info.length;
+                    return qty / qtyTotal * 100;
+                }
+            },
+            created() {
+                this.info.forEach(field => {
+                    field.valid = false;
+                    field.activated = false;
+                    field.value= '';
+                })
+            }
+        }).mount('.sample');
+    </script>
+</body>
+
+</html>

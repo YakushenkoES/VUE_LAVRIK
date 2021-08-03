@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="css/styles.css" rel="stylesheet">
+    <script src="js/vue.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="sample">
+            <div class="Todo">
+                <h1>Your actions</h1>
+
+                <app-action v-for="action, i in todoList" :title="action.title" :current="action.current"
+                    :max="action.max" :key="i" v-on:increase="makeStep(i)"></app-action>
+
+            </div>
+        </div>
+    </div>
+    <script>
+
+
+
+
+        const AppAction = {
+            props: {
+                title: String,
+                current: Number,
+                max: Number
+            },
+            template: `<div class="action" >
+            <div class="alert" :class="alertClasses">
+                <h2>{{ title }}</h2>
+                <div class="progress">
+                    <div :style="progressStyle" class="progress-bar" > </div>
+                </div>
+                <hr>
+                <h3 v-if="current === max">All done!</h3>
+                <button v-else type="button" class="btn btn-primary" v-on:click="onClick" >
+                    I make step!
+                </button>
+            </div>
+        </div>`,
+
+            computed: {
+                rel() {
+                    return this.current / this.max;
+                },
+                progressStyle() {
+                    return {
+                        width: (this.rel * 100) + '%'
+                    };
+                },
+                alertClasses() {
+                    const {
+                        rel
+                    } = this;
+                    return {
+                        'alert-danger': rel < 0.25,
+                        'alert-warning': rel >= 0.25 && rel < 0.75,
+                        'alert-success': rel >= 0.75
+                    };
+                }
+            },
+            methods: {
+                onClick() {
+                   // console.log("clicked");
+                    this.$emit("increase");
+                }
+            },
+            // updated(){
+            //     console.log("updated");
+            // }
+
+        };
+
+
+
+
+
+
+
+        Vue.createApp({
+            components: {
+                AppAction
+            },
+            data: () => ({
+                todoList: [{
+                        title: 'First action',
+                        current: 0,
+                        max: 5
+                    },
+                    {
+                        title: 'Other work',
+                        current: 0,
+                        max: 10
+                    },
+                    {
+                        title: 'Some fun',
+                        current: 0,
+                        max: 7
+                    }
+                ]
+            }),
+            methods: {
+                makeStep(i) {
+                    let step = this.todoList[i];
+
+                    if (step.current < step.max) {
+                        step.current++;
+                    }
+                },
+            }
+        }).mount('.sample');
+    </script>
+</body>
+
+</html>
