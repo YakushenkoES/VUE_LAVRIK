@@ -23,7 +23,6 @@
                     <app-field v-for="_field, i in info" v-on:changed="onChanged(i, $event)"
                         v-bind:label="_field.label"
                         v-bind:value="_field.value"
-                        v-bind:pattern="_field.pattern"
                         v-bind:activated="_field.activated"
                         v-bind:valid="_field.valid"
                     ></app-field>
@@ -46,11 +45,13 @@
     </div>
     <script>
         const AppField = {
+            emits:{
+                input: null
+            },
             props:{
                 label: String,
                 value: String,
                 valid: Boolean,
-                pattern: RegExp,
                 activated: Boolean
             },
             template: `
@@ -61,15 +62,14 @@
                             class="fa" :class="validClass"
                         ></span>
                     </label>
-                    <input type="text" class="form-control" :value="value" v-on:input.trim='onInput'>
+                    <input type="text" class="form-control" :value="value" v-on:input='onInput'>
                 </div>
             `,
             methods:{
                 onInput(e){
                     const val = e.target.value;
                     const _data = {
-                        value: val,
-                        valid: this.pattern.test(val),
+                        value: val.trim(),
                         activated: true
                     }
                     this.$emit("changed", _data);
@@ -93,22 +93,27 @@
             data: () => ({
                 info: [{
                         label: 'Name',
+                        value: '',
                         pattern: /^[a-zA-Z ]{2,30}$/
                     },
                     {
                         label: 'Phone',
+                        value: '',
                         pattern: /^[0-9]{7,14}$/
                     },
                     {
                         label: 'Email',
+                        value: '',
                         pattern: /.+/
                     },
                     {
                         label: 'Some Field 1',
+                        value: '',
                         pattern: /.+/
                     },
                     {
                         label: 'Some Field 2',
+                        value: '',
                         pattern: /.+/
                     }
                 ],
@@ -120,7 +125,7 @@
                     const f = this.info[i];
                     f.value = data.value;
                     f.activated = data.activated;
-                    f.valid = data.valid;
+                    f.valid = f.pattern.test(data.value);
                 },
                 onSubmit(){
                     if(this.complete_pc >=100)
