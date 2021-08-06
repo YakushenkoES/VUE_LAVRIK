@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>1</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link href="css/styles.css" rel="stylesheet">
+	<script src="js/vue.js"></script>
+</head>
+<body>
+<div class="wrapper">
+	<div class="sample">
+        <app-modal title="Check your data">
+            <p>Orfer price {{total}}</p>
+            <p>In cart {{items}}</p>
+            
+            <template v-slot:footer>
+                <button class="btn btn-danger" v-on:click="reset">Clean cart</button>
+            </template>
+
+        </app-modal>
+
+        <app-modal @ok="showError = false" v-if="showError">
+            <template v-slot:header>
+                <h2>Check some</h2>
+            </template>
+            <p>Далеко-далеко за словесными горами в стране гласных, и согласных живут рыбные тексты.</p>
+        </app-modal>
+    </div>
+</div>
+<script>
+
+let app = Vue.createApp({
+	data(){
+        return {
+            total:5000,
+            items: 5,
+            showError: true
+        }
+    },
+    methods:{
+        reset(){
+            this.total = 0;
+            this.items = 0;
+        }
+    }
+});
+
+app.component('app-modal', {
+	template: `
+    <div class="alert alert-success">
+        <slot name="header"> 
+             <h3>{{title}}</h3>
+        </slot>
+        <hr>
+        <slot></slot>
+        <hr>
+        <slot name="footer">
+            <button class="btn btn-primary mr-3"  @click="$emit('ok')">Ok</button>
+            <button class="btn btn-secondary" @click="$emit('cancel')" >Cancel</button>
+        </slot>
+    </div>
+	`,
+	props: {
+        title: String,
+        content: String
+	}
+});
+
+app.mount('.sample');
+
+</script>
+</body>
+</html>

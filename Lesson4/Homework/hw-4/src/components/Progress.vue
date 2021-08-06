@@ -1,9 +1,8 @@
 <template>
-    <div class="app-progress">
-        <div class="app-progress__bar" v-bind:style="progrStyle" >
-            <div class="app-progress__label">{{progrLabel}}</div>
+    <div class="appprogress">
+        <div class="appprogress__bar" v-bind:style="progrStyle" >
+            <div class="appprogress__label">{{progrLabel}}</div>
         </div>
-        
     </div>
 </template>
 
@@ -40,10 +39,10 @@ export default {
 </script>
 
 <style lang="scss" scope>
-    .app-progress {
+    .appprogress {
         $height: 20px;
         $clr: #76cdff;
-
+        box-sizing: border-box;
         position: relative;
         height: $height;
         overflow: hidden;
@@ -59,7 +58,7 @@ export default {
             left:0;
             width: 20%;
             background-color: adjust-color($clr, $lightness: 10%);
-            transition: width 0.5s;
+            transition: width 0.25s;
         }
 
         &__label{

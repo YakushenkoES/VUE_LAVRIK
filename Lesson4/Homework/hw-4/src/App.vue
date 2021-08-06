@@ -1,9 +1,9 @@
 <template>
     <div class="container">
-        <app-progress :value="complete_pc" :min="0" :max="100"></app-progress>
         <form v-if="!sent" v-on:submit.prevent="onSubmit">
+            <app-progress :value="complete_pc" :min="0" :max="100"></app-progress>
             <div>
-                <app-field
+                <field
                     v-for="(_field, i) in info"
                     v-on:fieldChanged="onChanged(i, $event)"
                     v-bind:label="_field.label"
@@ -11,7 +11,7 @@
                     v-bind:activated="_field.activated"
                     v-bind:valid="_field.valid"
                     :key="i"
-                ></app-field>
+                ></field>
             </div>
             <button class="btn btn-primary" v-bind:disabled="complete_pc < 100">
                 Send Data
@@ -30,12 +30,12 @@
 </template>
 
 <script>
-import AppField from "./components/AppField.vue";
-import AppProgress from './components/AppProgress.vue';
+import Field from "./components/Field.vue";
+import Progress from './components/Progress.vue';
 export default {
     components: {
-        AppField,
-        AppProgress
+        Field,
+        AppProgress:Progress
     },
     data: () => ({
         info: [

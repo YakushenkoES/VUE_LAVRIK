@@ -1,13 +1,11 @@
 <template>
     <div class="form-group">
+
         <label>
             {{ label }}
-            <template v-if="activated">
-                <font-awesome-icon v-if="valid" icon="check-circle" class="text-success"/>
-                <font-awesome-icon v-else icon="exclamation-circle" class="text-danger" />
-            </template>
-
+            <font-awesome-icon v-if="activated" v-bind:icon="icon" v-bind:class="iconClass"/>
         </label>
+        
         <input
             type="text"
             class="form-control"
@@ -47,6 +45,15 @@ export default {
                 "fa-exclamation-circle text-danger": !this.valid,
             };
         },
+        icon(){
+            return this.valid ? "check-circle" : "exclamation-circle";
+        },
+        iconClass(){
+            return {
+                "text-success": this.valid,
+                "text-danger": !this.valid
+            };
+        }
     },
 };
 </script>

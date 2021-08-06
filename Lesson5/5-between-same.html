@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="css/styles.css" rel="stylesheet">
+    <script src="js/vue.js"></script>
+</head>
+
+<style name="scss">
+
+.sample{
+    overflow: hidden;
+}
+.fade-enter-active{
+    animation: fadeIn 0.5s;
+}
+
+
+.fade-leave-active{
+    animation: fadeOut 0.5s;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform: translateX(-100px);
+    }
+    to{
+        opacity:1;
+        transform: translateX(0px);
+    }
+}
+@keyframes fadeOut{
+    from{
+        opacity:1;
+        transform: translateX(0px);
+    }
+    to{
+        opacity:0;
+        transform: translateX(-100px);
+    }
+}
+
+
+</style>
+
+
+<body>
+    <div class="wrapper">
+        <div class="sample">
+            <button class="btn btn-primary" @click="showAlert=!showAlert">Toggle alert</button>
+            <hr>
+
+            <transition name="fade" mode ="out-in">
+                <div class="alert alert-success" v-if="showAlert">
+                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nulla, dolore!</p>
+                </div>
+                <div class="alert alert-danger" v-else="!showAlert">
+                    Error
+                </div>
+            </transition>
+
+        </div>
+    </div>
+    <script>
+        let app = Vue.createApp({
+            data() {
+                return {
+                    showAlert: false,
+                }
+            },
+            methods: {
+                reset() {
+                    this.total = 0;
+                    this.items = 0;
+                }
+            }
+        });
+
+
+
+        app.mount('.sample');
+    </script>
+</body>
+
+</html>
