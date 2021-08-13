@@ -6,11 +6,8 @@
             <transition name='fade'>
                 <span v-if="activated">
                     <transition name="rotate" mode="out-in">
-                        <font-awesome-icon v-if="valid" 
-                            v-bind:icon="icon"
-                            v-bind:class="iconClass"
-                        />
-                        <font-awesome-icon v-else
+                        <font-awesome-icon  
+                            :key="icon"
                             v-bind:icon="icon"
                             v-bind:class="iconClass"
                         />

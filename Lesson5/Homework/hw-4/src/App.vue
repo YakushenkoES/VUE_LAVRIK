@@ -64,26 +64,28 @@
                     </span>
                 </template>
             </el-dialog>
+
+            <transition-group name="guests">
+                <div
+                    class="form-group guests-item"
+                    v-for="(_g, i) in guests"
+                    :key="_g.key"
+                >
+                    <label v-on:dblclick="removeGuest(i)"
+                        >Guest {{ i + 1 }}</label
+                    >
+                    <input
+                        type="text"
+                        class="form-control"
+                        v-model.trim="guests[i].title"
+                    />
+                </div>
+            </transition-group>
         </form>
 
         <div v-else>
             <h2>Data Sent!</h2>
         </div>
-
-        <transition-group name="guests">
-            <div
-                class="form-group guests-item"
-                v-for="(_g, i) in guests"
-                :key="_g.key"
-            >
-                <label v-on:dblclick="removeGuest(i)">Guest {{ i + 1 }}</label>
-                <input
-                    type="text"
-                    class="form-control"
-                    v-model.trim="guests[i].title"
-                />
-            </div>
-        </transition-group>
     </div>
 </template>
 
@@ -159,13 +161,12 @@ export default {
             f.activated = data.activated;
             f.valid = f.pattern.test(data.value);
         },
-        onSubmitClick(){
+        onSubmitClick() {
             //this.$refs.form.submit();
             this.onSubmit();
         },
         onSubmit() {
             if (this.complete_pc >= 100) this.sent = true;
-            
         },
         addGuest() {
             this.guests.push({ title: "", key: Math.random() });
@@ -189,8 +190,7 @@ export default {
             ).length;
             const qtyTotal = this.info.length;
             return (qty / qtyTotal) * 100;
-        }
-       
+        },
     },
     created() {
         this.info.forEach((field) => {
