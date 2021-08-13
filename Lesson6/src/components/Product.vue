@@ -4,12 +4,12 @@
 		<h2>{{title}}</h2>
 		<div class="price">{{ price }}</div>
 		<button class="btn btn-warning" @click="decrease(id)" :disabled="!canDecrease">-1</button>
-        <input class="form-control" type="number" min="0" max="10000" v-bind:value="cnt" v-on:input="setCount($event.target.value, id)"/>
+        <input class="form-control" type="number" min="0" max="10000" v-bind:value="cnt" v-on:input="setCount({cnt:$event.target.value, id})"/>
 		<button class="btn btn-success" @click="increase(id)">+1</button>
 	</div>
 </template>
 <script>
-	import { mapActions } from 'vuex';
+	import { mapActions, mapGetters } from 'vuex';
 
 	export default {
         props:{
@@ -28,13 +28,13 @@
             }
         },
 		computed: {
-			canDecrease(){
-                return true;
-				//return this.cnt > 1;
+            ...mapGetters(["product"]),
+            canDecrease(){
+				return this.product(this.id).cnt > 1;
 			}
 		},
 		methods: {
-			...mapActions(['decrease', 'increase', 'setCount'])
+            ...mapActions(['decrease', 'increase', 'setCount'])
 		}
 	}
 
