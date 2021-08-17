@@ -19,7 +19,6 @@ export default {
         },
 
         prodsInCart: (state,getters,rs, rootGetters) => {
-            console.log('prodsInCart');
             const getProduct = rootGetters["products/getProduct"];
 
             const products = state.products.map(_pr => {
@@ -33,7 +32,6 @@ export default {
                 }
                 return prod;
             }).filter(_pr => (_pr !== undefined && _pr !== null));
-            console.log('products :>> ', products);
             return products;
         }
 
@@ -65,19 +63,40 @@ export default {
         }
 	},
 	actions: {
-		add({ commit, getters }, { id }){
+		async add({ commit, getters, dispatch }, { id }){
 			if(!getters.inCart(id)){
-				commit('add', { id, cnt: 1 });
+                dispatch("products/addInProgress",id,{root:true});
+                await new Promise(resolve=>{
+                    commit('add', { id, cnt: 1 });
+                    setTimeout(()=>{
+                        resolve();
+                    },1000);
+                });
+                dispatch("products/removeInProgress",id,{root:true});
 			}
 		},
-		remove({ commit, getters }, { id }){
+		async remove({ commit, getters, dispatch  }, { id }){
 			if(getters.inCart(id)){
-				commit('remove', id);
-			}
+                dispatch("products/addInProgress",id,{root:true});
+                await new Promise(resolve=>{
+                    commit('remove', id);
+                    setTimeout(()=>{
+                        resolve();
+                    },1000);
+			    });
+                dispatch("products/removeInProgress",id,{root:true});
+            }
 		},
-		setCnt({ commit, getters }, { id, cnt }){
+		async setCnt({ commit, getters , dispatch }, { id, cnt }){
 			if(getters.inCart(id)){
-				commit('setCnt', { id, cnt });
+                dispatch("products/addInProgress",id,{root:true});
+                await new Promise(resolve=>{
+                    commit('setCnt', { id, cnt });
+                    setTimeout(()=>{
+                        resolve();
+                            },1000);
+                });
+                dispatch("products/removeInProgress",id,{root:true});
 			}
 		}
 	}

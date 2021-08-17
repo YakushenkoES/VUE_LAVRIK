@@ -7,7 +7,10 @@ const store = createStore({
 	modules: {
 		products,
 		cart
-	}
+	},
+    state:{
+    },
+   
 });
 
 export default store;

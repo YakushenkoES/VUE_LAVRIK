@@ -6,6 +6,7 @@ import router from './router';
 let app = createApp(App);
 app.use(store);
 app.use(router);
-app.mount('#app')
+
+store.dispatch("products/load").then(()=>{app.mount('#app');});
 
 import 'bootstrap/dist/css/bootstrap.min.css';

@@ -1,16 +1,44 @@
 export default {
 	namespaced: true,
 	state: {
-		items: productsStub()
+		items: [],
+        productsInProgress:[]
 	},
 	getters: {
 		all: state => state.items,
-        getProduct: state=>_id=>state.items.find(_p=>_p.id===_id)
+        getProduct: state=>_id=>state.items.find(_p=>_p.id===_id),
+        inProgress: state=> _id => state.productsInProgress.find(_i=>_i===_id)!==undefined
 	},
-	mutations: {
-	},
-	actions: {
-	}
+    mutations:{
+        ADD(state, id){
+            if(id in state.productsInProgress){
+                return;
+            }
+            state.productsInProgress.push(id);
+        },
+        REMOVE(state, id){
+            state.productsInProgress=state.productsInProgress.filter(_id=> _id!==id);
+        },
+        LOAD(state, items){
+            state.items = items;
+        }
+    },
+    actions:{
+        addInProgress(store, id){
+            store.commit("ADD", id);
+        },
+        removeInProgress(store, id){
+            store.commit("REMOVE", id);
+        },
+        async load(store){
+            const items = await new Promise(resolve=>{
+                setTimeout(()=>{
+                    resolve(productsStub()) ;
+                } ,1500)
+            });
+            store.commit("LOAD",items);
+        }
+    }
 }
 
 function productsStub(){

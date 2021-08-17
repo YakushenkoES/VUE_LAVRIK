@@ -6,7 +6,10 @@
             <thead>
                 <tr>
                     <th>Товар</th>
-                    <th>Количество</th>
+                    <th>Цена</th>
+                    <th>Кол-во</th>
+                    <th>Итог</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -15,26 +18,29 @@
                     v-bind:key="_pr.id + '_' + _pr.cnt"
                 >
                     <td>{{ _pr.title }}</td>
+                    <td>{{ _pr.price }}</td>
+                    <td>{{ _pr.cnt }}</td>
+                    <td>{{ _pr.cnt *_pr.price}}</td>
                     <td>
-                        <button
+                        <button :disabled="_pr.cnt <= 1 || inProgress(_pr.id) "  
                             class="btn btn-warning"
                             @click="setCnt({ id: _pr.id, cnt: _pr.cnt - 1 })"
-                            :disabled="_pr.cnt <= 1"
+                            
                         >
                             -1
                         </button>
-                        <input
+                        <input  :disabled="inProgress(_pr.id)"
                             class="form-control"
                             v-bind:value="_pr.cnt"
                             v-on:change="onChange($event, _pr.id)"
                         />
-                        <button
+                        <button  :disabled="inProgress(_pr.id)"
                             class="btn btn-success"
                             @click="setCnt({ id: _pr.id, cnt: _pr.cnt + 1 })"
                         >
                             +1
                         </button>
-                        <button
+                        <button  :disabled="inProgress(_pr.id)"
                             type="button"
                             class="btn btn-danger"
                             @click="remove({ id: _pr.id })"
@@ -62,6 +68,7 @@ export default {
     },
     computed: {
         ...mapGetters("cart", ["prodsInCart"]),
+        ...mapGetters("products", ["inProgress"]),
     },
     methods: {
         ...mapActions("cart", ["setCnt", "remove"]),
