@@ -4,7 +4,7 @@
 		<h2>{{title}}</h2>
 		<div class="price">{{ price }}</div>
 		<button class="btn btn-warning" @click="decrease(id)" :disabled="!canDecrease">-1</button>
-        <input class="form-control" type="number" min="0" max="10000" v-bind:value="cnt" v-on:input="setCount({cnt:$event.target.value, id})"/>
+        <input class="form-control" v-bind:value="cnt" v-on:change="onChange"/>
 		<button class="btn btn-success" @click="increase(id)">+1</button>
 	</div>
 </template>
@@ -34,7 +34,15 @@
 			}
 		},
 		methods: {
-            ...mapActions(['decrease', 'increase', 'setCount'])
+            ...mapActions(['decrease', 'increase', 'setCount']),
+            onChange(e){
+                this.setCount({cnt:e.target.value, id: this.id});
+                
+                if(e.target.value !== this.cnt.toString()){
+                    this.$forceUpdate();
+                }
+
+            }
 		}
 	}
 

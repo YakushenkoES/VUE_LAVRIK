@@ -45,7 +45,7 @@ const store = createStore({
         isOrderDone: (state) => state.status === ORDER_STATUSES.done
     },
     mutations: {
-        setCount(state, { cnt, id }) {
+        SET_COUNT(state, { cnt, id }) {
 
             const prod = this.getters.product(id);
             if (!prod) return;
@@ -61,28 +61,30 @@ const store = createStore({
             prod.cnt = cnt;
         },
 
-        setStatus(state, status) {
+        SET_STATUS(state, status) {
             state.status = status;
         }
     },
     actions: {
-        decrease(store, id) {
-            const cnt = store.getters.product(id).cnt - 1;
-            store.commit("setCount", { cnt, id });
+        //decrease(store, id) {
+        decrease({getters:{product}, commit}, id) {
+            const cnt = product(id).cnt - 1;
+            commit("SET_COUNT", { cnt, id });
         },
-        increase(store, id) {
-            const cnt = store.getters.product(id).cnt + 1;
-            store.commit("setCount", { cnt, id });
+        increase({getters:{product}, commit}, id) {
+            const cnt = product(id).cnt + 1;
+            commit("SET_COUNT", { cnt, id });
         },
-        setCount(store, { cnt, id }) {
-            store.commit("setCount", { cnt, id });
+        setCount({commit}, { cnt, id }) {
+            
+            commit("SET_COUNT", { cnt, id });
         },
 
-        send(store) {
-            store.commit("setStatus", ORDER_STATUSES.pending);
+        send({commit}) {
+            commit("SET_STATUS", ORDER_STATUSES.pending);
 
             setTimeout(() => {
-                store.commit("setStatus", ORDER_STATUSES.done);
+                commit("SET_STATUS", ORDER_STATUSES.done);
             }, 3000);
         }
     }

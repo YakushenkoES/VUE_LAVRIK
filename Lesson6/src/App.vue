@@ -8,7 +8,7 @@
 <script>
 	import AppHeader from './components/Header';
 	import AppContent from './components/Content';
-
+    
 	export default {
 		components: {
 			AppHeader,
